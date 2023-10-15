@@ -4,7 +4,8 @@ import "./todo-list.css";
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import TodoService from "../../services/TodoService";
 
-const TodoList = ({todos, onDeleted, onToggleImportant, onToggleDone, setTodos}) => {
+const TodoList = ({todos, setTodos, filterForTodos, onDeleted, onToggleImportant, onToggleDone}) => {
+
     if (!todos.length) {
         return <h1 style={{textAlign: "center"}}>Справ нема!</h1>
     }
@@ -38,7 +39,7 @@ const TodoList = ({todos, onDeleted, onToggleImportant, onToggleDone, setTodos})
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                     >
-                        {todos.map((todo, index) => (
+                        {filterForTodos(todos).map((todo, index) => (
                             <Draggable key={todo.id} draggableId={todo.id.toString()} index={index}>
                                 {(provided) => (
                                     <li

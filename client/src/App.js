@@ -13,18 +13,31 @@ function App() {
 
     const [todos, setTodos] = useState([]);
     const [filter, setFilter] = useState('all');
-    const [term, setTerm] = useState('');
+    const [term, setTerm] = useState("");
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         TodoService.getAllTodos().then(response => {
             const sortedTodos = response.data.sort((a, b) => a.priority - b.priority);
             setTodos(sortedTodos);
         });
+
+        setTerm(localStorage.getItem("term") || "");
+        setMessage(localStorage.getItem("message") || "");
+        setTodos(JSON.parse(localStorage.getItem('todos')) || []);
+        window.addEventListener("storage", onStorageUpdate);
+        return () => {
+            window.removeEventListener("storage", onStorageUpdate);
+        };
     }, [])
     const deleteTodo = (id) => {
-        TodoService.deleteTodo(id).then(response => {
+        TodoService.deleteTodo(id).then(_ => {
             const priority = todos.find(todo => todo.id === id).priority;
             const todosWithoutDeleted = todos.filter(todo => todo.id !== id);
+
+            setTodos(todosWithoutDeleted)
+            localStorage.setItem('todos', JSON.stringify(todosWithoutDeleted));
+
             const todosToUpdatePr = []
             todosWithoutDeleted.forEach(todo => {
                 if (todo.priority > priority) {
@@ -32,12 +45,11 @@ function App() {
                     todosToUpdatePr.push(todo)
                 }
             });
-            setTodos(todosWithoutDeleted)
             TodoService.updatePriorities(todosToUpdatePr).then(response => console.log(response.data))
         })
     }
 
-    const addItem = (message) => {
+    const addTodo = (message) => {
         let todo = {
             priority: todos.length + 1,
             message: message,
@@ -47,7 +59,9 @@ function App() {
         };
 
         TodoService.addTodo(todo).then(response => {
-            setTodos([...todos, response.data])
+            let newTodos = [...todos, response.data];
+            setTodos(newTodos)
+            localStorage.setItem('todos', JSON.stringify(newTodos));
         })
     }
 
@@ -64,12 +78,16 @@ function App() {
 
     const onToggleImportant = (todo) => {
         TodoService.setImportantTodo(todo).then(response => {
-            setTodos(toggleProperty(todos, response.data, todo.id));
+            const newTodos = toggleProperty(todos, response.data, todo.id);
+            setTodos(newTodos);
+            localStorage.setItem('todos', JSON.stringify(newTodos));
         })
     }
     const onToggleDone = (todo) => {
         TodoService.setDoneTodo(todo).then(response => {
-            setTodos(toggleProperty(todos, response.data, todo.id))
+            const newTodos = toggleProperty(todos, response.data, todo.id);
+            setTodos(newTodos);
+            localStorage.setItem('todos', JSON.stringify(newTodos));
         })
     }
     const onFilterChange = (filter) => {
@@ -99,27 +117,54 @@ function App() {
         }
     }
 
-    const onSearchChange = (term) => {
-        setTerm(term);
+    const handleTermChange = (events) => {
+        const newTerm = events.target.value;
+        setTerm(newTerm);
+        localStorage.setItem("term", newTerm);
     }
 
-    const visibleItems = filterTodo(searchTodo(todos, term), filter);
+    const handleMessageChange = (events) => {
+        const newMessage = events.target.value;
+        setMessage(newMessage)
+        localStorage.setItem("message", newMessage)
+    }
+
+    const onStorageUpdate = (e) => {
+        const {key, newValue} = e;
+        if (key === "term") {
+            setTerm(newValue);
+        }
+        if (key === "message") {
+            setMessage(newValue);
+        }
+        if (key === "todos") {
+            setTodos(JSON.parse(localStorage.getItem('todos')) || [])
+        }
+    };
+
+    const filterForTodos = (todos) => {
+        return filterTodo(searchTodo(todos, term), filter);
+    }
 
     return (
         <div>
             <div className="todo-app">
                 <AppHeader toDo={todoCount} done={doneCount}/>
                 <div className="top-panel d-flex">
-                    <SearchPanel onSearchChange={onSearchChange}/>
+                    <SearchPanel term={term}
+                                 handleTermChange={handleTermChange}/>
                     <ItemStatusFilter filter={filter}
                                       onFilterChange={onFilterChange}/>
                 </div>
-                <TodoList todos={visibleItems}
+                <TodoList todos={todos}
+                          setTodos={setTodos}
+                          filterForTodos = {filterForTodos}
                           onDeleted={deleteTodo}
                           onToggleImportant={onToggleImportant}
-                          onToggleDone={onToggleDone}
-                          setTodos={setTodos}/>
-                <ItemAddForm onItemAdded={addItem}/>
+                          onToggleDone={onToggleDone}/>
+                <ItemAddForm message={message}
+                             onItemAdded={addTodo}
+                             handleMessageChange={handleMessageChange}/>
             </div>
             <Footer/>
         </div>
