@@ -38,6 +38,11 @@ public class TodoController {
     Todo savedTodo = todoService.addTodo(todo);
     return new ResponseEntity<>(savedTodo, HttpStatus.CREATED);
   }
+  @PostMapping("/replace")
+  public ResponseEntity<?> replaceTodos(@RequestBody List<Todo> todos) {
+    todoService.replaceTodos(todos);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
   @PutMapping("/done")
   public ResponseEntity<?> setDoneTodo(@RequestBody Todo todo) {
     Todo doneTodo = todoService.setDoneTodo(todo.getId());

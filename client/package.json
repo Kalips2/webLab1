@@ -7,19 +7,30 @@
     "@fortawesome/free-regular-svg-icons": "^6.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@googleapis/drive": "^8.4.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.2.1",
     "babel-plugin-macros": "^3.1.0",
     "bootstrap": "^5.2.3",
+    "cors": "^2.8.5",
+    "google-auth-library": "^9.1.0",
+    "googleapis": "^127.0.0",
+    "http-proxy-middleware": "^2.0.6",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-bootstrap": "^2.7.0",
     "react-dom": "^18.2.0",
+    "react-google-drive-picker": "^1.2.2",
     "react-scripts": "^5.0.1",
-    "web-vitals": "^2.1.4"
+    "rm": "^0.1.8",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2",
+    "web-vitals": "^2.1.4",
+    "ws": "^8.14.2"
   },
+  "proxy": "http://localhost:3001",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -31,6 +42,11 @@
       "react-app",
       "react-app/jest"
     ]
+  },
+  "browser": {
+    "buffer": false,
+    "path": false,
+    "stream": false
   },
   "browserslist": {
     "production": [

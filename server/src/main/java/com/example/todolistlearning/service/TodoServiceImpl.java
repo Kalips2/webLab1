@@ -58,4 +58,10 @@ public class TodoServiceImpl implements TodoService {
       }
     }
   }
+
+  @Override
+  public void replaceTodos(List<Todo> todos) {
+    todoRepository.deleteAll();
+    todoRepository.saveAll(todos);
+  }
 }

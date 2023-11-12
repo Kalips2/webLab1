@@ -8,6 +8,7 @@ import "./App.css";
 import SearchPanel from "./components/search-panel/search-panel";
 import ItemStatusFilter from "./components/item-status-filter/ItemStatusFilter";
 import Footer from "./components/footer/footer";
+import {io} from "socket.io-client";
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
     const [filter, setFilter] = useState('all');
     const [term, setTerm] = useState("");
     const [message, setMessage] = useState("");
+    const socket = io('http://localhost:3001');
 
     useEffect(() => {
         TodoService.getAllTodos().then(response => {
@@ -63,6 +65,10 @@ function App() {
             setTodos(newTodos)
             localStorage.setItem('todos', JSON.stringify(newTodos));
         })
+    }
+    const replaceTodos = (newTodos) => {
+        setTodos(newTodos)
+        localStorage.setItem('todos', JSON.stringify(newTodos));
     }
 
     const toggleProperty = (todos, response, id) => {
@@ -152,16 +158,19 @@ function App() {
                 <AppHeader toDo={todoCount} done={doneCount}/>
                 <div className="top-panel d-flex">
                     <SearchPanel term={term}
-                                 handleTermChange={handleTermChange}/>
+                                 handleTermChange={handleTermChange}
+                                 socket={socket}/>
                     <ItemStatusFilter filter={filter}
                                       onFilterChange={onFilterChange}/>
                 </div>
                 <TodoList todos={todos}
                           setTodos={setTodos}
-                          filterForTodos = {filterForTodos}
+                          filterForTodos={filterForTodos}
                           onDeleted={deleteTodo}
                           onToggleImportant={onToggleImportant}
-                          onToggleDone={onToggleDone}/>
+                          onToggleDone={onToggleDone}
+                          replaceTodos={replaceTodos}
+                          socket={socket}/>
                 <ItemAddForm message={message}
                              onItemAdded={addTodo}
                              handleMessageChange={handleMessageChange}/>

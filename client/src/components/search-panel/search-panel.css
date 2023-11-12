@@ -4,3 +4,17 @@
     margin-right: 3px;
     left: -10px;
 }
+
+.search-panel.active {
+    border: 1px solid red;
+    font-style: italic;
+}
+
+.red-text {
+    color: red;
+}
+
+.blue-text {
+    color: blue;
+    font-style: italic;
+}

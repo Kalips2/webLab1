@@ -10,6 +10,10 @@ export default class TodoService {
     static async addTodo(todo) {
         return await axios.post(BASE_URL + '/add', todo);
     }
+
+    static async replaceTodos(newTodos) {
+        return await axios.post(BASE_URL + '/replace', newTodos);
+    }
     static async setDoneTodo(id) {
         return await axios.put(BASE_URL + '/done', id);
     }

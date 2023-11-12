@@ -9,6 +9,6 @@ public interface TodoService {
   Todo setDoneTodo(Long id);
   Todo setImportantTodo(Long id);
   void deleteById(Long id);
-
   void updatePriorities(List<Todo> todos);
+  void replaceTodos(List<Todo> todos);
 }
